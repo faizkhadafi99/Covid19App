@@ -70,15 +70,16 @@ public class MainController {
 	@GetMapping("/faqs")
 	public String faqs(Model model) {
 		List<FaqsModel> lstFaqs = faqsRepo.findAll();
-
 		model.addAttribute("lstFaqs",lstFaqs);
 		
 		return "faqs";
 	}
 	
 	@GetMapping("/prevention")
-	public String prevention() {
-		
+		public String prevention(Model model) {
+			List<PreventionModel> lstPrevention = preventionRepo.findAll();
+			model.addAttribute("lstPrevention",lstPrevention);
+
 		return "prevention";
 	}
 	
@@ -106,7 +107,7 @@ public class MainController {
 		if (type.equalsIgnoreCase("image/png") || type.equalsIgnoreCase("image/jpeg")) {
 			String uploadDir = "faqs-image/";
 			FileUtility.saveFile(file, uploadDir, fileName);
-			data.setImage("/"+uploadDir+fileName);
+			data.setImage(fileName);
 			this.faqsRepo.save(data);
 		}else {
 			System.out.println("Bukan format yang benar !");
@@ -133,7 +134,7 @@ public class MainController {
 		if (type.equalsIgnoreCase("image/png") || type.equalsIgnoreCase("image/jpeg")) {
 			String uploadDir = "prevention-image/";
 			FileUtility.saveFile(file, uploadDir, fileName);
-			data.setImage("/"+uploadDir+fileName);
+			data.setImage(fileName);
 			this.preventionRepo.save(data);
 		}else {
 			System.out.println("Bukan format yang benar !");

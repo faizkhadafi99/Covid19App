@@ -14,7 +14,7 @@ public class ImageConfig implements WebMvcConfigurer {
 	@Override
 	public void addResourceHandlers (ResourceHandlerRegistry registry) {
 		exposeDirectory (registry, "prevention-image");
-		exposeDirectory (registry, "faqs-image");	
+		exposeDirectory (registry, "faqs-image");
 		
 	}
 	
