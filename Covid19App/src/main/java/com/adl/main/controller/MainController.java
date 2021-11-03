@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.adl.main.model.AllCovidInfo;
+import com.adl.main.model.FaqsModel;
 import com.adl.main.model.MockPostModel;
 import com.adl.main.model.PreventionModel;
+import com.adl.main.repository.FaqsRepository;
 import com.adl.main.repository.PreventionRepository;
 import com.adl.main.services.CovidApiService;
 import com.adl.main.services.MockPostService;
@@ -31,6 +33,9 @@ public class MainController {
 	
 	@Autowired
 	PreventionRepository preventionRepo;
+	
+	@Autowired
+	FaqsRepository faqsRepo;
 	
 	
 	@GetMapping("/")
@@ -63,7 +68,10 @@ public class MainController {
 		return "countries";
 	}
 	@GetMapping("/faqs")
-	public String faqs() {
+	public String faqs(Model model) {
+		List<FaqsModel> lstFaqs = faqsRepo.findAll();
+
+		model.addAttribute("lstFaqs",lstFaqs);
 		
 		return "faqs";
 	}
@@ -80,6 +88,33 @@ public class MainController {
 		return "symptoms";
 	}
 
+	@GetMapping("/faqs/input")
+	public String getInputFaqs(Model model) {
+		
+		model.addAttribute("faqsModel", new FaqsModel());
+		return "input_faqs";
+	}
+	
+	@PostMapping("/faqs/input")
+	public String inputFaqs(
+			@ModelAttribute("faqsModel") FaqsModel data,
+			Model model,
+			@RequestParam("file") MultipartFile file) throws IOException {
+		
+		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		String type = file.getContentType();
+		if (type.equalsIgnoreCase("image/png") || type.equalsIgnoreCase("image/jpeg")) {
+			String uploadDir = "faqs-image/";
+			FileUtility.saveFile(file, uploadDir, fileName);
+			data.setImage("/"+uploadDir+fileName);
+			this.faqsRepo.save(data);
+		}else {
+			System.out.println("Bukan format yang benar !");
+		}
+		
+		return "redirect:/faqs/input";
+	}
+	
 	@GetMapping("/prevention/input")
 	public String getInputPrevention(Model model) {
 		
